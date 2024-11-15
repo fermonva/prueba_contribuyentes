@@ -30,6 +30,7 @@
                         <td>
                             {{ implode(', ', $role->permissions->pluck('name')->toArray()) }}
                         </td>
+                        @hasrole('Super Usuario')
                         <td>
                             <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-warning btn-sm">Editar</a>
                             <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline-block;">
@@ -38,6 +39,7 @@
                                 <button class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este rol?')">Eliminar</button>
                             </form>
                         </td>
+                        @endhasrole
                     </tr>
                 @endforeach
                 </tbody>

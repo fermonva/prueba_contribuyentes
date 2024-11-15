@@ -41,19 +41,28 @@
                     </div>
 
                     {{-- Nombres --}}
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3" id="nombres_div">
                         <label for="nombres" class="form-label">Nombres</label>
-                        <input type="text" name="nombres" class="form-control" id="nombres" value="{{ old('nombres', $contribuyente->nombres) }}" required>
+                        <input type="text" name="nombres" class="form-control" id="nombres" value="{{ old('nombres', $contribuyente->nombres) }}">
                         @error('nombres')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
 
                     {{-- Apellidos --}}
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6 mb-3" id="apellidos_div">
                         <label for="apellidos" class="form-label">Apellidos</label>
                         <input type="text" name="apellidos" class="form-control" id="apellidos" value="{{ old('apellidos', $contribuyente->apellidos) }}">
                         @error('apellidos')
+                        <small class="text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+
+                    {{-- Razón Social --}}
+                    <div class="col-md-6 mb-3" id="razon_social_div" style="display: none;">
+                        <label for="razon_social" class="form-label">Razón Social</label>
+                        <input type="text" name="razon_social" class="form-control" id="razon_social" value="{{ old('razon_social', $contribuyente->nombres . ' ' . $contribuyente->apellidos) }}">
+                        @error('razon_social')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror
                     </div>
@@ -119,6 +128,27 @@
 
 @section('js')
     <script>
-        console.log("Formulario de edición de contribuyente cargado");
+        document.addEventListener('DOMContentLoaded', function () {
+            const tipoDocumento = document.getElementById('tipo_documento');
+            const nombresDiv = document.getElementById('nombres_div');
+            const apellidosDiv = document.getElementById('apellidos_div');
+            const razonSocialDiv = document.getElementById('razon_social_div');
+
+            // Función para manejar el cambio de tipo de documento
+            tipoDocumento.addEventListener('change', function () {
+                if (tipoDocumento.value === 'NIT') {
+                    nombresDiv.style.display = 'none';  // Ocultar los campos de nombres
+                    apellidosDiv.style.display = 'none';  // Ocultar los campos de apellidos
+                    razonSocialDiv.style.display = 'block';  // Mostrar el campo de razón social
+                } else {
+                    nombresDiv.style.display = 'block';  // Mostrar los campos de nombres
+                    apellidosDiv.style.display = 'block';  // Mostrar los campos de apellidos
+                    razonSocialDiv.style.display = 'none';  // Ocultar el campo de razón social
+                }
+            });
+
+            // Inicializar la vista dependiendo del valor seleccionado
+            tipoDocumento.dispatchEvent(new Event('change'));
+        });
     </script>
 @stop
