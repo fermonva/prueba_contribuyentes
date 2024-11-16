@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\LetterCounterHelper;
 use App\Http\Requests\ContribuyenteRequest;
 use App\Interfaces\ContribuyenteRepositoryInterface;
 use App\Models\Contribuyente;
@@ -65,7 +66,9 @@ class ContribuyenteController extends Controller
     public function show(string $id): Renderable
     {
         $contribuyente = $this->contribuyenteRepositoryInterface->find($id);
-        return view('contribuyente.show', compact('contribuyente'));
+        $fullName = $contribuyente->nombres . ' ' . $contribuyente->apellidos;
+        $letterCounts = LetterCounterHelper::countLetters($fullName);
+        return view('contribuyente.show', compact('contribuyente' , 'letterCounts'));
     }
 
     /**

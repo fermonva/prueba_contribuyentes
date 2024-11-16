@@ -71,6 +71,23 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class=" mb-3">
+                    <label for="nombres" class="form-label">Nombres:</label>
+                    <p>{{ $contribuyente->nombres }}</p>
+                    <label for="apellidos" class="form-label">Apellidos:</label>
+                    <p>{{ $contribuyente->apellidos }}</p>
+                </div>
+                <div class=" mb-3">
+                    <label for="updated_at" class="form-label">Conteo de Letras:</label>
+                    <pre>
+                @foreach ($letterCounts as $letter => $count)
+                    "{{ $letter }}": {{ $count }}{{ $loop->last ? '' : ',' }}
+                 @endforeach
+        </pre>
+                </div>
+            </div>
+
         </div>
     </div>
 @stop
