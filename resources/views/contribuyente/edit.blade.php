@@ -61,7 +61,7 @@
                     {{-- Razón Social --}}
                     <div class="col-md-6 mb-3" id="razon_social_div" style="display: none;">
                         <label for="razon_social" class="form-label">Razón Social</label>
-                        <input type="text" name="razon_social" class="form-control" id="razon_social" value="{{ old('razon_social', $contribuyente->nombres . ' ' . $contribuyente->apellidos) }}">
+                        <input type="text" name="razon_social" class="form-control" id="razon_social" value="{{ old('razon_social', $contribuyente->full_name) }}">
                         @error('razon_social')
                         <small class="text-danger">{{ $message }}</small>
                         @enderror

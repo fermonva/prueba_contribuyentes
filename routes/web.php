@@ -13,9 +13,7 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::resource('roles', RolController::class);
-Route::resource('contribuyentes', ContribuyenteController::class);
-
-Route::group(['middleware' => ['role:Administrador']], function () {
-
+Route::group(['middleware' => ['auth']], function () {
+    Route::resource('roles', RolController::class);
+    Route::resource('contribuyentes', ContribuyenteController::class);
 });

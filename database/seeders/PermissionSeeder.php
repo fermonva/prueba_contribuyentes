@@ -13,11 +13,13 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        Permission::create(['name' => "ver menu contribuyentes"]);
         Permission::create(['name' => "ver contribuyentes"]);
         Permission::create(['name' => "crear contribuyentes"]);
         Permission::create(['name' => "editar contribuyentes"]);
         Permission::create(['name' => "eliminar contribuyentes"]);
 
+        Permission::create(['name' => "ver menu roles"]);
         Permission::create(['name' => "ver roles"]);
         Permission::create(['name' => "crear roles"]);
         Permission::create(['name' => "editar roles"]);

@@ -36,7 +36,7 @@ class RoleSeeder extends Seeder
         $adminUser->assignRole($roleAdmin);
         $superUser->assignRole($roleSuperAdmin);
 
-        $permissionAdmin = Permission::whereIn('name', ['ver contribuyentes', 'ver roles'])->get();
+        $permissionAdmin = Permission::whereIn('name', ['ver menu contribuyentes','ver contribuyentes', 'ver menu roles'])->get();
         $roleAdmin->syncPermissions($permissionAdmin);
     }
 }

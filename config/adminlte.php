@@ -325,11 +325,13 @@ return [
             'text' => 'Roles',
             'url' => 'roles',
             'icon' => 'fas fa-fw fa-user-tag',
+            'can' => 'ver menu roles',
         ],
         [
             'text' => 'Contribuyentes',
             'url' => 'contribuyentes',
             'icon' => 'fas fa-fw fa-users',
+            'can' => 'ver menu contribuyentes',
         ]
     ],
 

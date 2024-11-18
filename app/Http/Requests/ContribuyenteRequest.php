@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\EmailValidator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Helpers\EmailValidator;
 
 class ContribuyenteRequest extends FormRequest
 {

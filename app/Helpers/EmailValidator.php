@@ -8,6 +8,8 @@ class EmailValidator
     protected static $allowedDomains = [
         'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
         'icloud.com', 'protonmail.com', 'zoho.com', 'aol.com',
+        // Dominios para pruebas
+        'example.com','example.org','example.net',
         // Comunes en Colombia
         'com.co', 'edu.co', 'gov.co',
         // Comunes en otros países de LATAM

@@ -6,7 +6,6 @@ use App\Helpers\LetterCounterHelper;
 use App\Http\Requests\ContribuyenteRequest;
 use App\Interfaces\ContribuyenteRepositoryInterface;
 use App\Models\Contribuyente;
-use App\Models\User;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,7 +16,6 @@ class ContribuyenteController extends Controller
 
     public function __construct(ContribuyenteRepositoryInterface $contribuyenteRepositoryInterface)
     {
-        $this->authorizeResource(User::class);
         $this->contribuyenteRepositoryInterface = $contribuyenteRepositoryInterface;
     }
     /**
@@ -65,6 +63,7 @@ class ContribuyenteController extends Controller
      */
     public function show(string $id): Renderable
     {
+        $this->authorize('ver contribuyentes');
         $contribuyente = $this->contribuyenteRepositoryInterface->find($id);
         $fullName = $contribuyente->nombres . ' ' . $contribuyente->apellidos;
         $letterCounts = LetterCounterHelper::countLetters($fullName);
@@ -76,6 +75,7 @@ class ContribuyenteController extends Controller
      */
     public function edit(string $id): Renderable
     {
+        $this->authorize('editar contribuyentes');
         $contribuyente = $this->contribuyenteRepositoryInterface->find($id);
         return view('contribuyente.edit', compact('contribuyente'));
     }
@@ -88,7 +88,7 @@ class ContribuyenteController extends Controller
         try {
             // Valida y edita el contribuyente
             $this->contribuyenteRepositoryInterface->update($contribuyente, $request->validated());
-            return redirect()->route('contribuyentes.index');
+            return redirect()->route('contribuyentes.index')->with('success', 'Contribuyente actualizado con éxito.');
         }catch (\Exception $e) {
             // Redirige de vuelta con mensaje de error
             return redirect()->back()->withErrors(['error' => 'Error al guardar el contribuyente: ' . $e->getMessage()]);
@@ -101,6 +101,6 @@ class ContribuyenteController extends Controller
     public function destroy(string $id): RedirectResponse
     {
         $this->contribuyenteRepositoryInterface->delete($id);
-        return redirect()->route('contribuyentes.index');
+        return redirect()->route('contribuyentes.index')->with('success', 'Contribuyente eliminado con éxito.');
     }
 }

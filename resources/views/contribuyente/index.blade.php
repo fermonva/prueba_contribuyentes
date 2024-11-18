@@ -10,9 +10,9 @@
     <div class="card p-4">
         <div class="card-header d-flex align-items-center">
             <h1 class="card-title">Listado de Contribuyentes</h1>
-            @hasrole('Super Usuario')
+            @can('crear contribuyentes')
             <a href="{{ route('contribuyentes.create') }}" class="btn btn-success ml-auto">Crear Contribuyente</a>
-            @endhasrole
+            @endcan
         </div>
 
 
@@ -46,7 +46,7 @@
             </form>
 
             {{-- Tabla de Contribuyentes --}}
-            <table class="table">
+            <table class="table table-striped">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -66,17 +66,21 @@
                         <td>{{ $contribuyente->nombres }}</td>
                         <td>{{ $contribuyente->apellidos }}</td>
                         <td>{{ $contribuyente->telefono }}</td>
-                        @hasrole('Super Usuario')
                         <td>
+                            @can('ver contribuyentes')
                             <a href="{{ route('contribuyentes.show', $contribuyente->id) }}" class="btn btn-info btn-sm">Ver</a>
+                            @endcan
+                            @can('editar contribuyentes')
                             <a href="{{ route('contribuyentes.edit', $contribuyente->id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            @endcan
+                            @can('eliminar contribuyentes')
                             <form action="{{ route('contribuyentes.destroy', $contribuyente->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro de eliminar este contribuyente?')">Eliminar</button>
                             </form>
+                            @endcan
                         </td>
-                        @endhasrole
                     </tr>
                 @endforeach
                 </tbody>
@@ -88,19 +92,19 @@
                 <ul class="pagination justify-content-center">
                     {{-- Botón "Anterior" --}}
                     <li class="page-item {{ $contribuyentes->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link" href="{{ $contribuyentes->previousPageUrl() }}" tabindex="-1">Anterior</a>
+                        <a class="page-link" href="{{ $contribuyentes->previousPageUrl() . '&' . http_build_query(request()->except('page')) }}" tabindex="-1">Anterior</a>
                     </li>
 
                     {{-- Enlaces de páginas --}}
                     @for ($i = 1; $i <= $contribuyentes->lastPage(); $i++)
                         <li class="page-item {{ $contribuyentes->currentPage() == $i ? 'active' : '' }}">
-                            <a class="page-link" href="{{ $contribuyentes->url($i) }}">{{ $i }}</a>
+                            <a class="page-link" href="{{ $contribuyentes->url($i) . '&' . http_build_query(request()->except('page')) }}">{{ $i }}</a>
                         </li>
                     @endfor
 
                     {{-- Botón "Siguiente" --}}
                     <li class="page-item {{ $contribuyentes->hasMorePages() ? '' : 'disabled' }}">
-                        <a class="page-link" href="{{ $contribuyentes->nextPageUrl() }}">Siguiente</a>
+                        <a class="page-link" href="{{ $contribuyentes->nextPageUrl() . '&' . http_build_query(request()->except('page')) }}">Siguiente</a>
                     </li>
                 </ul>
             </nav>

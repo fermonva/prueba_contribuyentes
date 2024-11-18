@@ -81,10 +81,10 @@
                 <div class=" mb-3">
                     <label for="updated_at" class="form-label">Conteo de Letras:</label>
                     <pre>
-                @foreach ($letterCounts as $letter => $count)
-                    "{{ $letter }}": {{ $count }}{{ $loop->last ? '' : ',' }}
-                 @endforeach
-        </pre>
+                        @foreach ($letterCounts as $letter => $count)
+                            "{{ $letter }}": {{ $count }}{{ $loop->last ? '' : ',' }}
+                         @endforeach
+                    </pre>
                 </div>
             </div>
 
