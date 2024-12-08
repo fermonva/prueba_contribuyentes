@@ -2,12 +2,16 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\ModelNotFoundException;
 use App\Interfaces\BaseRepositoryInterface;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class BaseRepository implements BaseRepositoryInterface
 {
-    protected $model;
+    protected Model $model;
+
     /**
      * Create a new class instance.
      */
@@ -16,39 +20,54 @@ class BaseRepository implements BaseRepositoryInterface
         $this->model = $model;
     }
 
-    public function all()
+    public function all(): iterable
     {
         return $this->model->all();
     }
 
-    public function find($id)
+    public function find(int|string $id): ?Model
     {
-        return $this->model->findOrFail($id);
-    }
+        $model = $this->model->findorFail($id);
 
-    public function create(array $data)
-    {
-        try {
-            return $this->model->create($data);
-        }catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+        if (!$model) {
+            throw new ModelNotFoundException("Modelo no encontrado con ID {$id}.");
         }
-    }
 
-    public function update($model, array $data)
-    {
-        try {
-            $model->update($data);
-            return $model;
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
-    }
-
-    public function delete($id)
-    {
-        $model = $this->find($id);
-        $model->delete();
         return $model;
+    }
+
+    public function create(array $data): Model
+    {
+        return DB::transaction(function () use ($data) {
+            return $this->model->create($data);
+        });
+    }
+
+    public function update(Model $model, array $data): bool
+    {
+        return DB::transaction(function () use ($model, $data) {
+            return $model->update($data);
+        });
+    }
+
+    public function delete(Model $model): bool
+    {
+        return DB::transaction(function () use ($model) {
+            return $model->delete();
+        });
+    }
+
+    public function paginate(int $perPage = 10, array $filters = []): LengthAwarePaginator
+    {
+        $query = $this->model->query();
+
+        // Aplicar filtros genéricos
+        foreach ($filters as $key => $value) {
+            if (!empty($value)) {
+                $query->where($key, 'LIKE', "%$value%");
+            }
+        }
+
+        return $query->paginate($perPage);
     }
 }

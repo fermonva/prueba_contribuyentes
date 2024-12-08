@@ -300,26 +300,26 @@ return [
 
     'menu' => [
         // Navbar items:
-//        [
-//            'type' => 'navbar-search',
-//            'text' => 'search',
-//            'topnav_right' => true,
-//        ],
+        //        [
+        //            'type' => 'navbar-search',
+        //            'text' => 'search',
+        //            'topnav_right' => true,
+        //        ],
         [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
         // Sidebar items:
-//        [
-//            'type' => 'sidebar-menu-search',
-//            'text' => 'search',
-//        ],
-//        [
-//            'text' => 'blog',
-//            'url' => 'admin/blog',
-//            'can' => 'manage-blog',
-//        ],
+        //        [
+        //            'type' => 'sidebar-menu-search',
+        //            'text' => 'search',
+        //        ],
+        //        [
+        //            'text' => 'blog',
+        //            'url' => 'admin/blog',
+        //            'can' => 'manage-blog',
+        //        ],
         ['header' => 'account_settings'],
         [
             'text' => 'Roles',
@@ -332,7 +332,13 @@ return [
             'url' => 'contribuyentes',
             'icon' => 'fas fa-fw fa-users',
             'can' => 'ver menu contribuyentes',
-        ]
+        ],
+        [
+            'text' => 'Personas',
+            'url' => 'accesibilidad_personas',
+            'icon' => 'fas fa-fw fa-user',
+            'can' => 'ver menu accesibilidad',
+        ],
     ],
 
     /*

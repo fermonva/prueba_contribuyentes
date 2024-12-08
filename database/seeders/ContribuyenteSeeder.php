@@ -1,10 +1,8 @@
 <?php
 
 namespace Database\Seeders;
-use App\Models\Contribuyente;
-use Faker\Factory as Faker;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Contribuyente;
 use Illuminate\Database\Seeder;
 
 class ContribuyenteSeeder extends Seeder

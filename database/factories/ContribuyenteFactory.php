@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ContribuyenteFactory extends Factory
 {
     protected $model = Contribuyente::class;
+
     /**
      * Define the model's default state.
      *

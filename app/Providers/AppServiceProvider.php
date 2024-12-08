@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
 use App\Interfaces\BaseRepositoryInterface;
 use App\Interfaces\ContribuyenteRepositoryInterface;
 use App\Repositories\BaseRepository;
 use App\Repositories\ContribuyenteRepository;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::preventLazyLoading(!app()->isProduction());
         Schema::defaultStringLength(191);
 
         Gate::before(function ($user, $ability) {

@@ -3,11 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
@@ -17,26 +15,26 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roleAdmin = Role::create(['name' => 'Administrador']);
-        $roleSuperAdmin =Role::create(['name' => 'Super Usuario']);
+        $roleSuperAdmin = Role::create(['name' => 'Super Usuario']);
 
         $adminUser = User::query()->create([
             'name' => 'fermonva',
-            'email'=> 'admin@gmail.com',
+            'email' => 'admin@gmail.com',
             'password' => '123456789',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         $superUser = User::query()->create([
             'name' => 'superuser',
-            'email'=> 'correo@correo.com',
+            'email' => 'correo@correo.com',
             'password' => '123456789',
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         $adminUser->assignRole($roleAdmin);
         $superUser->assignRole($roleSuperAdmin);
 
-        $permissionAdmin = Permission::whereIn('name', ['ver menu contribuyentes','ver contribuyentes', 'ver menu roles'])->get();
+        $permissionAdmin = Permission::whereIn('name', ['ver menu contribuyentes', 'ver contribuyentes', 'ver menu roles'])->get();
         $roleAdmin->syncPermissions($permissionAdmin);
     }
 }

@@ -13,8 +13,9 @@ class RolController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
-        return view('rol.index', compact('roles'));
+        $roles = Role::with( 'permissions' )->get();
+
+        return view( 'rol.index', compact( 'roles' ) );
     }
 
     /**
@@ -23,43 +24,44 @@ class RolController extends Controller
     public function create()
     {
         $permissions = Permission::all(); // Obtener todos los permisos disponibles
-        return view('rol.create', compact('permissions'));
+
+        return view( 'rol.create', compact( 'permissions' ) );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store( Request $request )
     {
         // Validar la solicitud
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'permissions' => 'array', // Asegúrate de que sea un array
+        $request->validate( [
+            'name'          => 'required|string|max:255|unique:roles,name',
+            'permissions'   => 'array', // Asegúrate de que sea un array
             'permissions.*' => 'exists:permissions,id', // Cada permiso debe existir en la tabla
-        ]);
+        ] );
 
         // Crear el nuevo rol
-        $role = new Role();
-        $role->name = $request->input('name');
+        $role       = new Role();
+        $role->name = $request->input( 'name' );
         $role->save();
 
         // Sincronizar los permisos con el nuevo rol
-        if ($request->has('permissions')) {
+        if ( $request->has( 'permissions' ) ) {
             // Obtener los nombres de los permisos seleccionados
-            $permissions = Permission::whereIn('id', $request->input('permissions'))->pluck('name')->toArray();
+            $permissions = Permission::whereIn( 'id', $request->input( 'permissions' ) )->pluck( 'name' )->toArray();
 
             // Sincronizar los permisos por nombre
-            $role->syncPermissions($permissions);
+            $role->syncPermissions( $permissions );
         }
 
         // Redirigir con un mensaje de éxito
-        return redirect()->route('roles.index')->with('success', 'Rol creado exitosamente');
+        return redirect()->route( 'roles.index' )->with( 'success', 'Rol creado exitosamente' );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show( string $id )
     {
         //
     }
@@ -67,45 +69,46 @@ class RolController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit( string $id )
     {
-        $role = Role::findOrFail($id); // Buscar el rol por ID
+        $role        = Role::findOrFail( $id ); // Buscar el rol por ID
         $permissions = Permission::all(); // Obtener todos los permisos disponibles
-        return view('rol.edit', compact('role', 'permissions'));
+
+        return view( 'rol.edit', compact( 'role', 'permissions' ) );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update( Request $request, string $id )
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $id,
-            'permissions' => 'array', // Asegúrate de que sea un array
+        $request->validate( [
+            'name'          => 'required|string|max:255|unique:roles,name,' . $id,
+            'permissions'   => 'array', // Asegúrate de que sea un array
             'permissions.*' => 'exists:permissions,id', // Cada permiso debe existir en la tabla
-        ]);
+        ] );
 
-        $role = Role::findOrFail($id); // Buscar el rol por ID
-        $role->name = $request->input('name'); // Actualizar el nombre
+        $role       = Role::findOrFail( $id ); // Buscar el rol por ID
+        $role->name = $request->input( 'name' ); // Actualizar el nombre
         $role->save();
 
         // Obtener los nombres de los permisos seleccionados
-        $permissions = Permission::whereIn('id', $request->input('permissions', []))->pluck('name')->toArray();
+        $permissions = Permission::whereIn( 'id', $request->input( 'permissions', [] ) )->pluck( 'name' )->toArray();
 
         // Sincronizar los permisos por nombre
-        $role->syncPermissions($permissions); // Pasar nombres de permisos
+        $role->syncPermissions( $permissions ); // Pasar nombres de permisos
 
-        return redirect()->route('roles.index')->with('success', 'Rol actualizado exitosamente');
+        return redirect()->route( 'roles.index' )->with( 'success', 'Rol actualizado exitosamente' );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy( string $id )
     {
-        $role = Role::findOrFail($id);
+        $role = Role::findOrFail( $id );
         $role->delete();
 
-        return redirect()->route('roles.index')->with('success', 'Rol eliminado exitosamente');
+        return redirect()->route( 'roles.index' )->with( 'success', 'Rol eliminado exitosamente' );
     }
 }

@@ -21,7 +21,7 @@ class Contribuyente extends Model
         'usuario',
     ];
 
-    public function getFullNameAttribute()
+    public function getFullNameAttribute() : string
     {
         return "{$this->nombres} {$this->apellidos}";
     }

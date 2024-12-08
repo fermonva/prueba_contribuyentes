@@ -9,12 +9,12 @@ class EmailValidator
         'gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com',
         'icloud.com', 'protonmail.com', 'zoho.com', 'aol.com',
         // Dominios para pruebas
-        'example.com','example.org','example.net',
+        'example.com', 'example.org', 'example.net',
         // Comunes en Colombia
         'com.co', 'edu.co', 'gov.co',
         // Comunes en otros países de LATAM
         'com.mx', 'edu.mx', 'gob.mx', 'com.ar', 'gov.ar', 'com.ve',
-        'com.br', 'gov.br', 'edu.br', 'com.pe', 'gov.pe', 'edu.pe'
+        'com.br', 'gov.br', 'edu.br', 'com.pe', 'gov.pe', 'edu.pe',
     ];
 
     public static function isValid($email)
@@ -23,7 +23,7 @@ class EmailValidator
             return false;
         }
 
-        $domain = substr(strrchr($email, "@"), 1);
+        $domain = substr(strrchr($email, '@'), 1);
 
         // Verificar que el dominio tenga registros MX y sea un dominio permitido
         return self::isDomainInLatam($domain) && self::isDomainValid($domain);
@@ -43,6 +43,7 @@ class EmailValidator
                 return true;
             }
         }
+
         return false;
     }
 }

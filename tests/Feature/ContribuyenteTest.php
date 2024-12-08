@@ -1,20 +1,20 @@
 <?php
 
-use \App\Models\User;
-use \App\Models\Contribuyente;
-use \Spatie\Permission\Models\Permission;
-use \Spatie\Permission\Models\Role;
-
-
-use function Pest\Laravel\{actingAs, get};
+use App\Models\Contribuyente;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
-beforeEach(fn() => User::factory()->create());
+beforeEach(fn () => User::factory()->create());
 
 it('has author')->assertDatabaseHas('users', [
-    'id' => 1
+    'id' => 1,
 ]);
 
 it('user not logged cannot access to contribuyentes page', function () {
@@ -72,7 +72,7 @@ it('user logged can edit contribuyente', function () {
         'direccion' => 'Direccion Modificada',
         'email' => 'modificado@gmail.com',
         'usuario' => 'usuario_modificado',
-    ])->assertRedirect("/contribuyentes")->assertSessionHas('success', 'Contribuyente actualizado con éxito.');
+    ])->assertRedirect('/contribuyentes')->assertSessionHas('success', 'Contribuyente actualizado con éxito.');
 
     // Verifica que los cambios se hayan aplicado en la base de datos
     $this->assertDatabaseHas('contribuyentes', [
@@ -92,12 +92,8 @@ it('user logged can delete contribuyente', function () {
     // Realiza el test del eliminar
     actingAs($user)
         ->delete("/contribuyentes/{$contribuyente->id}")
-        ->assertRedirect("/contribuyentes")
+        ->assertRedirect('/contribuyentes')
         ->assertSessionHas('success', 'Contribuyente eliminado con éxito.');
     // Verifica que el contribuyente haya sido eliminado de la base de datos
     $this->assertDatabaseMissing('contribuyentes', ['id' => $contribuyente->id]);
 });
-
-
-
-

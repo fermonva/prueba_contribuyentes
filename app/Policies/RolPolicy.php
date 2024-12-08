@@ -2,14 +2,14 @@
 
 namespace App\Policies;
 
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class RolPolicy
 {
     use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */

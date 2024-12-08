@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ModelNotFoundException;
+use App\Helpers\ExtractSearchFilters;
 use App\Helpers\LetterCounterHelper;
 use App\Http\Requests\ContribuyenteRequest;
 use App\Interfaces\ContribuyenteRepositoryInterface;
@@ -14,93 +16,86 @@ class ContribuyenteController extends Controller
 {
     protected ContribuyenteRepositoryInterface $contribuyenteRepositoryInterface;
 
-    public function __construct(ContribuyenteRepositoryInterface $contribuyenteRepositoryInterface)
+    public function __construct( ContribuyenteRepositoryInterface $contribuyenteRepositoryInterface )
     {
         $this->contribuyenteRepositoryInterface = $contribuyenteRepositoryInterface;
     }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Renderable
+    public function index( Request $request ) : Renderable
     {
-        $filters = [
-            'tipo_documento' => $request->get('tipo_documento'),
-            'documento' => $request->get('documento'),
-            'nombres' => $request->get('nombres'),
-            'apellidos' => $request->get('apellidos'),
-            'telefono' => $request->get('telefono'),
-        ];
+        $filters        = ExtractSearchFilters::extractFiltersContribuyente( $request );
+        $contribuyentes = $this->contribuyenteRepositoryInterface->paginate( 10, $filters );
 
-        $contribuyentes = $this->contribuyenteRepositoryInterface->paginateAll($filters);
-        return view('contribuyente.index', compact('contribuyentes'));
+        return view( 'contribuyente.index', compact( 'contribuyentes' ) );
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): Renderable
+    public function create() : Renderable
     {
-        return view('contribuyente.create');
+        return view( 'contribuyente.create' );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ContribuyenteRequest $request): RedirectResponse
+    public function store( ContribuyenteRequest $request ) : RedirectResponse
     {
-        try {
-            // Valida y guarda el nuevo contribuyente
-            $this->contribuyenteRepositoryInterface->create($request->validated());
-            return redirect()->route('contribuyentes.index')->with('success', 'Contribuyente creado con éxito.');
-        } catch (\Exception $e) {
-            // Redirige de vuelta con mensaje de error
-            return redirect()->back()->withErrors(['error' => 'Error al guardar el contribuyente: ' . $e->getMessage()]);
-        }
+        $this->contribuyenteRepositoryInterface->create( $request->validated() );
+
+        return redirect()->route( 'contribuyentes.index' )->with( 'success', 'Contribuyente creado con éxito.' );
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id): Renderable
+    public function show( string $id ) : Renderable | RedirectResponse
     {
-        $this->authorize('ver contribuyentes');
-        $contribuyente = $this->contribuyenteRepositoryInterface->find($id);
-        $fullName = $contribuyente->nombres . ' ' . $contribuyente->apellidos;
-        $letterCounts = LetterCounterHelper::countLetters($fullName);
-        return view('contribuyente.show', compact('contribuyente' , 'letterCounts'));
+        try {
+            $this->authorize( 'ver contribuyentes' );
+            $contribuyente = $this->contribuyenteRepositoryInterface->find( $id );
+
+            $letterCounts = LetterCounterHelper::countLetters( $contribuyente->full_name );
+
+            return view( 'contribuyente.show', compact( 'contribuyente', 'letterCounts' ) );
+        } catch ( ModelNotFoundException $e ) {
+            return redirect()->route( 'contribuyentes.index' )->withErrors( ['error' => $e->getMessage()] );
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id): Renderable
+    public function edit( string $id ) : Renderable
     {
-        $this->authorize('editar contribuyentes');
-        $contribuyente = $this->contribuyenteRepositoryInterface->find($id);
-        return view('contribuyente.edit', compact('contribuyente'));
+        $this->authorize( 'editar contribuyentes' );
+        $contribuyente = $this->contribuyenteRepositoryInterface->find( $id );
+
+        return view( 'contribuyente.edit', compact( 'contribuyente' ) );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(ContribuyenteRequest $request, Contribuyente $contribuyente): RedirectResponse
+    public function update( ContribuyenteRequest $request, Contribuyente $contribuyente ) : RedirectResponse
     {
-        try {
-            // Valida y edita el contribuyente
-            $this->contribuyenteRepositoryInterface->update($contribuyente, $request->validated());
-            return redirect()->route('contribuyentes.index')->with('success', 'Contribuyente actualizado con éxito.');
-        }catch (\Exception $e) {
-            // Redirige de vuelta con mensaje de error
-            return redirect()->back()->withErrors(['error' => 'Error al guardar el contribuyente: ' . $e->getMessage()]);
-        }
+        $this->contribuyenteRepositoryInterface->update( $contribuyente, $request->validated() );
+
+        return redirect()->route( 'contribuyentes.index' )->with( 'success', 'Contribuyente actualizado con éxito.' );
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): RedirectResponse
+    public function destroy( string $id ) : RedirectResponse
     {
-        $this->contribuyenteRepositoryInterface->delete($id);
-        return redirect()->route('contribuyentes.index')->with('success', 'Contribuyente eliminado con éxito.');
+        $contribuyente = $this->contribuyenteRepositoryInterface->find( $id );
+        $this->contribuyenteRepositoryInterface->delete( $contribuyente );
+
+        return redirect()->route( 'contribuyentes.index' )->with( 'success', 'Contribuyente eliminado con éxito.' );
     }
 }
