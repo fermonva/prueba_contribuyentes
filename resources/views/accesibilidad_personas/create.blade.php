@@ -37,7 +37,7 @@
                 </div>
 
                 {{-- Municipios --}}
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-3 d-none" id="municipio-container">
                     <label for="dipo_id" class="form-label">Municipio</label>
                     <select name="dipo_id" id="dipo_id" class="form-control" required>
                         <option value="">Seleccione un municipio</option>
@@ -70,23 +70,32 @@
         // Detectar cambio en el select de departamento
         $('#dipo_dep_id').on('change', function() {
             var dipo_dep_id = $(this).val();
+            var municipioContainer = $('#municipio-container');
+            var municipioSelect = $('#dipo_id');
+
             if (dipo_dep_id) {
+                // Mostrar el contenedor de municipios
+                municipioContainer.removeClass('d-none');
+
                 // Hacer la solicitud AJAX para obtener los municipios
                 $.ajax({
                     url: '/accesibilidad_personas/municipios/' + dipo_dep_id, // Ruta a la que haremos la petición
                     method: 'GET',
                     success: function(data) {
-                        var municipios = data.municipios;
-                        var municipioSelect = $('#dipo_id');
                         municipioSelect.empty(); // Limpiar las opciones anteriores
                         municipioSelect.append('<option value="">Seleccione un municipio</option>'); // Opción por defecto
 
                         // Agregar los municipios a la lista
-                        $.each(municipios, function(dipo_id, dipo_ciudad) {
+                        $.each(data.municipios, function(dipo_id, dipo_ciudad) {
                             municipioSelect.append('<option value="' + dipo_id + '">' + dipo_ciudad + '</option>');
                         });
                     }
                 });
+            } else {
+                // Ocultar el contenedor de municipios y limpiar las opciones
+                municipioContainer.addClass('d-none');
+                municipioSelect.empty();
+                municipioSelect.append('<option value="">Seleccione un municipio</option>');
             }
         });
     });
